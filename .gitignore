@@ -1,0 +1,103 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.egg-link
+MANIFEST
+pip-wheel-metadata/
+.installed.cfg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# mypy / type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+
+# Ruff / linters
+.ruff_cache/
+
+# ── FastAPI / Uvicorn ──────────────────────────────────────────────────────────
+*.log
+*.pid
+
+# ── Next.js / Node ────────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+.cache/
+.parcel-cache/
+.turbo/
+
+# Build output
+dist/
+build/
+
+# Next.js telemetry
+.next/telemetry/
+
+# Package manager locks (keep only one — adjust to your toolchain)
+# Uncomment the one you don't use:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ── General web / tooling ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/settings.json
+.vscode/*.code-workspace
+
+# ── Secrets & credentials ─────────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+.secrets/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.docker/
+
+# ── Database / migrations scratch ─────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+.temp/
+tmp/
