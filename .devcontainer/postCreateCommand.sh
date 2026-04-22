@@ -15,4 +15,15 @@ claude plugins marketplace update claude-plugins-official || true
 # Install required plugin from the explicit marketplace.
 claude plugins install ralph-loop@claude-plugins-official
 
+# Register the GitHub Copilot MCP server (requires GITHUB_TOKEN, available in Codespaces).
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  claude mcp add \
+    --transport http \
+    --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+    --scope project \
+    github-copilot https://api.githubcopilot.com/mcp || true
+else
+  echo "GITHUB_TOKEN not set — skipping GitHub Copilot MCP registration."
+fi
+
 echo "Dev container is ready."
