@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Highlighted field values within the NDA document */
+.field-value {
+  background-color: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.field-placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Prose overrides for the standard terms */
+.standard-terms .prose ol {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: none;
+}
+
+/* Print styles — hide the form panel, show only the NDA document */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  main {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .nda-document {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .cover-page {
+    page-break-after: always;
+  }
+
+  /* Allow the document to flow to full print length */
+  .print-wrapper {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
