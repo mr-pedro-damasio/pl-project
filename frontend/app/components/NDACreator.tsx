@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import NDAForm from "./NDAForm";
 import NDAPreview from "./NDAPreview";
 import { NDAFormData } from "@/app/lib/types";
+import { clearToken } from "@/app/lib/auth";
 
 function today(): string {
   return new Date().toISOString().split("T")[0];
@@ -24,10 +26,16 @@ const defaultData: NDAFormData = {
 };
 
 export default function NDACreator() {
+  const router = useRouter();
   const [data, setData] = useState<NDAFormData>(defaultData);
 
   function handlePrint() {
     window.print();
+  }
+
+  function handleLogout() {
+    clearToken();
+    router.replace("/login");
   }
 
   return (
@@ -35,7 +43,7 @@ export default function NDACreator() {
       {/* Header */}
       <header className="no-print sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-slate-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#209dd7" }}>
             <svg
               className="w-4 h-4 text-white"
               fill="none"
@@ -59,25 +67,24 @@ export default function NDACreator() {
             </p>
           </div>
         </div>
-        <button
-          onClick={handlePrint}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 active:scale-95 transition-all"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm active:scale-95 transition-all"
+            style={{ backgroundColor: "#209dd7" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-            />
-          </svg>
-          Download PDF
-        </button>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download PDF
+          </button>
+          <button
+            onClick={handleLogout}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 active:scale-95 transition-all"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
 
       {/* Body */}
