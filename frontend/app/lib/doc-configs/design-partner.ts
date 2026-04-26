@@ -1,0 +1,76 @@
+import { DocTypeConfig } from "./types";
+import { DESIGN_PARTNER_TEMPLATE } from "../templates/design-partner";
+
+export const designPartnerConfig: DocTypeConfig = {
+  docTypeId: "design-partner",
+  catalogFilename: "design-partner-agreement.md",
+  displayName: "Design Partner Agreement",
+  description: "Common Paper standard agreement for early-stage design partner relationships",
+  isSupplementDoc: false,
+  templateContent: DESIGN_PARTNER_TEMPLATE,
+  coverPage: {
+    partyALabel: "Provider",
+    partyBLabel: "Partner",
+    showSignatures: true,
+  },
+  fields: [
+    {
+      key: "effectiveDate",
+      label: "Effective Date",
+      type: "date",
+      templateMarker: "Effective Date",
+      coverPageOrder: 1,
+    },
+    {
+      key: "term",
+      label: "Term",
+      type: "text",
+      hint: "duration of the program",
+      placeholder: "6 months",
+      templateMarker: "Term",
+      coverPageOrder: 2,
+    },
+    {
+      key: "program",
+      label: "Program Description",
+      type: "textarea",
+      placeholder: "Early access program for beta testing of the product",
+      templateMarker: "Program",
+      coverPageOrder: 3,
+    },
+    {
+      key: "fees",
+      label: "Fees",
+      type: "text",
+      hint: "leave blank if none",
+      placeholder: "None",
+      templateMarker: "Fees",
+      coverPageOrder: 4,
+    },
+    {
+      key: "governingLaw",
+      label: "Governing Law",
+      type: "text",
+      hint: "US state name",
+      placeholder: "Delaware",
+      templateMarker: "Governing Law",
+      coverPageOrder: 5,
+    },
+    {
+      key: "chosenCourts",
+      label: "Chosen Courts",
+      type: "text",
+      hint: "city/county and state",
+      placeholder: "New Castle, Delaware",
+      templateMarker: "Chosen Courts",
+      coverPageOrder: 6,
+    },
+    {
+      key: "noticeAddress",
+      label: "Notice Address",
+      type: "text",
+      hint: "email or postal address for notices",
+      templateMarker: "Notice Address",
+    },
+  ],
+};

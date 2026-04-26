@@ -1,0 +1,76 @@
+import { DocTypeConfig } from "./types";
+import { SLA_TEMPLATE } from "../templates/sla";
+
+export const slaConfig: DocTypeConfig = {
+  docTypeId: "sla",
+  catalogFilename: "sla.md",
+  displayName: "Service Level Agreement",
+  description: "Common Paper standard SLA defining uptime commitments and remedies",
+  isSupplementDoc: true,
+  templateContent: SLA_TEMPLATE,
+  coverPage: {
+    partyALabel: "Provider",
+    partyBLabel: "Customer",
+    showSignatures: true,
+  },
+  fields: [
+    {
+      key: "parentAgreementName",
+      label: "Parent Agreement",
+      type: "text",
+      hint: "name of the Cloud Service Agreement this supplements",
+      placeholder: "Cloud Service Agreement dated January 1, 2026",
+      coverPageOrder: 1,
+    },
+    {
+      key: "targetUptime",
+      label: "Target Uptime",
+      type: "text",
+      placeholder: "99.9%",
+      templateMarker: "Target Uptime",
+      coverPageOrder: 2,
+    },
+    {
+      key: "targetResponseTime",
+      label: "Target Response Time",
+      type: "text",
+      placeholder: "4 business hours",
+      templateMarker: "Target Response Time",
+      coverPageOrder: 3,
+    },
+    {
+      key: "supportChannel",
+      label: "Support Channel",
+      type: "text",
+      placeholder: "support@provider.com",
+      templateMarker: "Support Channel",
+      coverPageOrder: 4,
+    },
+    {
+      key: "uptimeCredit",
+      label: "Uptime Credit",
+      type: "text",
+      hint: "credit formula for uptime failures",
+      placeholder: "5% of monthly fees per 1% below target",
+      templateMarker: "Uptime Credit",
+      coverPageOrder: 5,
+    },
+    {
+      key: "responseTimeCredit",
+      label: "Response Time Credit",
+      type: "text",
+      placeholder: "2% of monthly fees per missed response",
+      templateMarker: "Response Time Credit",
+      coverPageOrder: 6,
+    },
+    {
+      key: "scheduledDowntime",
+      label: "Scheduled Downtime",
+      type: "text",
+      hint: "definition of acceptable maintenance windows",
+      placeholder: "Sundays 2–4 AM UTC",
+      templateMarker: "Scheduled Downtime",
+      coverPageOrder: 7,
+    },
+  ],
+};

@@ -2,42 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import NDAForm from "./NDAForm";
-import NDAChat from "./NDAChat";
-import NDAPreview from "./NDAPreview";
-import { NDAFormData, NDAFieldPatch, PartyInfo } from "@/app/lib/types";
+import { DocTypeConfig, DocumentState, GenericFieldPatch } from "@/app/lib/doc-configs/types";
+import { buildDefaultState, mergeState } from "@/app/lib/state-utils";
 import { clearToken } from "@/app/lib/auth";
+import GenericDocumentForm from "./GenericDocumentForm";
+import GenericDocumentPreview from "./GenericDocumentPreview";
+import DocumentChat from "./DocumentChat";
 
-function today(): string {
-  return new Date().toISOString().split("T")[0];
+interface Props {
+  config: DocTypeConfig;
 }
 
-const defaultData: NDAFormData = {
-  purpose:
-    "Evaluating whether to enter into a business relationship with the other party.",
-  effectiveDate: today(),
-  mndaTermType: "expires",
-  mndaTermYears: "1",
-  confidentialityTermType: "fixed",
-  confidentialityTermYears: "1",
-  governingLaw: "",
-  jurisdiction: "",
-  party1: { name: "", title: "", company: "", noticeAddress: "", date: today() },
-  party2: { name: "", title: "", company: "", noticeAddress: "", date: today() },
-};
-
-function mergeData(prev: NDAFormData, patch: NDAFieldPatch): NDAFormData {
-  return {
-    ...prev,
-    ...patch,
-    party1: { ...prev.party1, ...(patch.party1 ?? {}) } as PartyInfo,
-    party2: { ...prev.party2, ...(patch.party2 ?? {}) } as PartyInfo,
-  };
-}
-
-export default function NDACreator() {
+export default function DocumentCreator({ config }: Props) {
   const router = useRouter();
-  const [data, setData] = useState<NDAFormData>(defaultData);
+  const [state, setState] = useState<DocumentState>(() => buildDefaultState(config));
   const [activeTab, setActiveTab] = useState<"chat" | "form">("chat");
 
   function handlePrint() {
@@ -49,8 +27,8 @@ export default function NDACreator() {
     router.replace("/login");
   }
 
-  function handleFieldsExtracted(patch: NDAFieldPatch) {
-    setData((prev) => mergeData(prev, patch));
+  function handleFieldsExtracted(patch: GenericFieldPatch) {
+    setState((prev) => mergeState(prev, patch));
   }
 
   return (
@@ -58,28 +36,21 @@ export default function NDACreator() {
       {/* Header */}
       <header className="no-print sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-slate-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push("/")}
+            className="text-xs text-slate-400 hover:text-slate-600 transition flex items-center gap-1"
+          >
+            ← All Documents
+          </button>
+          <div className="w-px h-5 bg-slate-200" />
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#209dd7" }}>
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-slate-900 leading-none">
-              Mutual NDA Creator
-            </h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Common Paper — Version 1.0
-            </p>
+            <h1 className="text-sm font-semibold text-slate-900 leading-none">{config.displayName}</h1>
+            <p className="text-xs text-slate-400 mt-0.5">Common Paper Standard Terms</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -123,19 +94,19 @@ export default function NDACreator() {
             ))}
           </div>
 
-          {/* Panels — both always mounted; hidden via CSS to preserve state */}
+          {/* Panels — CSS hidden to preserve chat state across tab switches */}
           <div className={`flex-1 overflow-y-auto p-6 ${activeTab === "chat" ? "flex flex-col" : "hidden"}`}>
-            <NDAChat onFieldsExtracted={handleFieldsExtracted} />
+            <DocumentChat docTypeId={config.docTypeId} onFieldsExtracted={handleFieldsExtracted} />
           </div>
           <div className={`flex-1 overflow-y-auto p-6 ${activeTab === "form" ? "block" : "hidden"}`}>
-            <NDAForm data={data} onChange={setData} />
+            <GenericDocumentForm config={config} state={state} onChange={setState} />
           </div>
         </aside>
 
-        {/* Preview panel */}
+        {/* Preview */}
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-3xl mx-auto">
-            <NDAPreview data={data} />
+            <GenericDocumentPreview config={config} state={state} />
           </div>
         </main>
       </div>

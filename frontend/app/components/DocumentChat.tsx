@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { NDAFieldPatch } from "@/app/lib/types";
+import { GenericFieldPatch } from "@/app/lib/doc-configs/types";
 import { apiFetch } from "@/app/lib/auth";
 
 interface ChatMessage {
@@ -10,10 +10,11 @@ interface ChatMessage {
 }
 
 interface Props {
-  onFieldsExtracted: (patch: NDAFieldPatch) => void;
+  docTypeId: string;
+  onFieldsExtracted: (patch: GenericFieldPatch) => void;
 }
 
-export default function NDAChat({ onFieldsExtracted }: Props) {
+export default function DocumentChat({ docTypeId, onFieldsExtracted }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,6 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
   const hasGreeted = useRef(false);
   const messagesRef = useRef<ChatMessage[]>([]);
 
-  // Keep ref in sync with state so async callbacks always read current history
   useEffect(() => { messagesRef.current = messages; }, [messages]);
 
   async function sendMessage(userText: string) {
@@ -38,7 +38,7 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
     if (userText) setMessages(apiMessages);
 
     try {
-      const res = await apiFetch("/api/chat/nda", {
+      const res = await apiFetch(`/api/chat/${docTypeId}`, {
         method: "POST",
         body: JSON.stringify({ messages: apiMessages }),
       });
@@ -61,7 +61,7 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
       hasGreeted.current = true;
       sendMessage("");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -89,15 +89,12 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Message list */}
       <div className="flex-1 overflow-y-auto space-y-3 pb-2">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div
               className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                msg.role === "user"
-                  ? "text-white rounded-tr-sm"
-                  : "bg-slate-100 text-slate-800 rounded-tl-sm"
+                msg.role === "user" ? "text-white rounded-tr-sm" : "bg-slate-100 text-slate-800 rounded-tl-sm"
               }`}
               style={msg.role === "user" ? { backgroundColor: "#209dd7" } : undefined}
             >
@@ -105,7 +102,6 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
             </div>
           </div>
         ))}
-
         {loading && (
           <div className="flex justify-start">
             <div className="bg-slate-100 rounded-2xl rounded-tl-sm px-4 py-3">
@@ -117,25 +113,16 @@ export default function NDAChat({ onFieldsExtracted }: Props) {
             </div>
           </div>
         )}
-
         <div ref={bottomRef} />
       </div>
 
-      {/* Error banner */}
       {error && (
         <div className="mb-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-sm text-red-700 flex items-center justify-between">
           <span>{error}</span>
-          <button
-            onClick={() => setError(null)}
-            className="ml-2 text-red-400 hover:text-red-600 font-medium"
-            aria-label="Dismiss error"
-          >
-            ✕
-          </button>
+          <button onClick={() => setError(null)} className="ml-2 text-red-400 hover:text-red-600 font-medium" aria-label="Dismiss error">✕</button>
         </div>
       )}
 
-      {/* Input row */}
       <div className="border-t border-slate-200 pt-3 flex gap-2 items-end">
         <textarea
           rows={2}

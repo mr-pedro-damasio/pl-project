@@ -1,6 +1,6 @@
-import { NDAFormData } from "./types";
+import { DocTypeConfig, DocumentState } from "./types";
 
-const STANDARD_TERMS_TEMPLATE = `# Standard Terms
+const TEMPLATE = `# Standard Terms
 
 1. **Introduction**. This Mutual Non-Disclosure Agreement (which incorporates these Standard Terms and the Cover Page (defined below)) ("**MNDA**") allows each party ("**Disclosing Party**") to disclose or make available information in connection with the <span class="coverpage_link">Purpose</span> which (1) the Disclosing Party identifies to the receiving party ("**Receiving Party**") as "confidential", "proprietary", or the like or (2) should be reasonably understood as confidential or proprietary due to its nature and the circumstances of its disclosure ("**Confidential Information**"). Each party's Confidential Information also includes the existence and status of the parties' discussions and information on the Cover Page. Confidential Information includes technical or business information, product designs or roadmaps, requirements, pricing, security and compliance documentation, technology, inventions and know-how. To use this MNDA, the parties must complete and sign a cover page incorporating these Standard Terms ("**Cover Page**"). Each party is identified on the Cover Page and capitalized terms have the meanings given herein or on the Cover Page.
 
@@ -29,36 +29,115 @@ const STANDARD_TERMS_TEMPLATE = `# Standard Terms
 *Common Paper Mutual Non-Disclosure Agreement [Version 1.0](https://commonpaper.com/standards/mutual-nda/1.0/) free to use under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).*
 `;
 
-export function buildStandardTerms(data: NDAFormData): string {
-  const mndaTerm =
-    data.mndaTermType === "expires"
-      ? `${data.mndaTermYears} year${Number(data.mndaTermYears) !== 1 ? "s" : ""} from Effective Date`
-      : "until terminated in accordance with the terms of the MNDA";
-
-  const confidentialityTerm =
-    data.confidentialityTermType === "fixed"
-      ? `${data.confidentialityTermYears} year${Number(data.confidentialityTermYears) !== 1 ? "s" : ""} from Effective Date`
-      : "in perpetuity";
-
-  const replacements: Record<string, string> = {
-    Purpose: data.purpose || "[Purpose]",
-    "Effective Date": data.effectiveDate || "[Effective Date]",
-    "MNDA Term": mndaTerm,
-    "Term of Confidentiality": confidentialityTerm,
-    "Governing Law": data.governingLaw || "[Governing Law]",
-    Jurisdiction: data.jurisdiction || "[Jurisdiction]",
-  };
-
-  let result = STANDARD_TERMS_TEMPLATE;
-  for (const [key, value] of Object.entries(replacements)) {
-    const pattern = new RegExp(
-      `<span class="coverpage_link">${key}<\\/span>`,
-      "g"
-    );
-    result = result.replace(
-      pattern,
-      `<span class="field-value">${value}</span>`
-    );
-  }
-  return result;
+function pluralYears(n: number): string {
+  return `${n} year${n !== 1 ? "s" : ""}`;
 }
+
+export const mutualNdaConfig: DocTypeConfig = {
+  docTypeId: "mutual-nda",
+  catalogFilename: "Mutual-NDA.md",
+  displayName: "Mutual Non-Disclosure Agreement",
+  description: "Common Paper standard Mutual NDA for sharing confidential information between two parties",
+  isSupplementDoc: false,
+  templateContent: TEMPLATE,
+  coverPage: {
+    partyALabel: "Party 1",
+    partyBLabel: "Party 2",
+    showSignatures: true,
+    intro:
+      'This Mutual Non-Disclosure Agreement (the "MNDA") consists of: (1) this Cover Page and (2) the Common Paper Mutual NDA Standard Terms Version 1.0. Any modifications of the Standard Terms should be made on the Cover Page, which will control over conflicts with the Standard Terms.',
+  },
+  fields: [
+    {
+      key: "purpose",
+      label: "Purpose",
+      type: "textarea",
+      hint: "how confidential information may be used",
+      placeholder: "Evaluating whether to enter into a business relationship with the other party.",
+      defaultValue: "Evaluating whether to enter into a business relationship with the other party.",
+      templateMarker: "Purpose",
+      coverPageOrder: 1,
+    },
+    {
+      key: "effectiveDate",
+      label: "Effective Date",
+      type: "date",
+      templateMarker: "Effective Date",
+      coverPageOrder: 2,
+    },
+    {
+      key: "mndaTermType",
+      label: "MNDA Term",
+      type: "radio",
+      options: [
+        { value: "expires", label: "Expires after a fixed number of years" },
+        { value: "until-terminated", label: "Continues until terminated" },
+      ],
+      defaultValue: "expires",
+      coverPageOrder: 3,
+      coverPageLabel: "MNDA Term",
+    },
+    {
+      key: "mndaTermYears",
+      label: "Years",
+      type: "number",
+      defaultValue: "1",
+      dependsOn: { field: "mndaTermType", value: "expires" },
+    },
+    {
+      key: "confidentialityTermType",
+      label: "Term of Confidentiality",
+      type: "radio",
+      options: [
+        { value: "fixed", label: "Fixed number of years from Effective Date" },
+        { value: "perpetual", label: "In perpetuity" },
+      ],
+      defaultValue: "fixed",
+      coverPageOrder: 4,
+      coverPageLabel: "Term of Confidentiality",
+    },
+    {
+      key: "confidentialityTermYears",
+      label: "Years",
+      type: "number",
+      defaultValue: "1",
+      dependsOn: { field: "confidentialityTermType", value: "fixed" },
+    },
+    {
+      key: "governingLaw",
+      label: "Governing Law",
+      type: "text",
+      hint: "US state name",
+      placeholder: "Delaware",
+      templateMarker: "Governing Law",
+      coverPageOrder: 5,
+    },
+    {
+      key: "jurisdiction",
+      label: "Jurisdiction",
+      type: "text",
+      hint: "city/county and state",
+      placeholder: "New Castle, Delaware",
+      templateMarker: "Jurisdiction",
+      coverPageOrder: 6,
+    },
+  ],
+  computedTemplateValues: (state: DocumentState) => {
+    const mndaYears = Math.max(1, Number(state.fields.mndaTermYears) || 1);
+    const mndaTerm =
+      state.fields.mndaTermType === "expires"
+        ? `${pluralYears(mndaYears)} from Effective Date`
+        : "until terminated in accordance with the terms of the MNDA";
+
+    const confYears = Math.max(1, Number(state.fields.confidentialityTermYears) || 1);
+    const confidentialityTerm =
+      state.fields.confidentialityTermType === "fixed"
+        ? `${pluralYears(confYears)} from Effective Date`
+        : "in perpetuity";
+
+    return {
+      "MNDA Term": mndaTerm,
+      "Term of Confidentiality": confidentialityTerm,
+    };
+  },
+};
