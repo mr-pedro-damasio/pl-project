@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NDAForm from "./NDAForm";
+import NDAChat from "./NDAChat";
 import NDAPreview from "./NDAPreview";
-import { NDAFormData } from "@/app/lib/types";
+import { NDAFormData, NDAFieldPatch, PartyInfo } from "@/app/lib/types";
 import { clearToken } from "@/app/lib/auth";
 
 function today(): string {
@@ -25,9 +26,19 @@ const defaultData: NDAFormData = {
   party2: { name: "", title: "", company: "", noticeAddress: "", date: today() },
 };
 
+function mergeData(prev: NDAFormData, patch: NDAFieldPatch): NDAFormData {
+  return {
+    ...prev,
+    ...patch,
+    party1: { ...prev.party1, ...(patch.party1 ?? {}) } as PartyInfo,
+    party2: { ...prev.party2, ...(patch.party2 ?? {}) } as PartyInfo,
+  };
+}
+
 export default function NDACreator() {
   const router = useRouter();
   const [data, setData] = useState<NDAFormData>(defaultData);
+  const [activeTab, setActiveTab] = useState<"chat" | "form">("chat");
 
   function handlePrint() {
     window.print();
@@ -36,6 +47,10 @@ export default function NDACreator() {
   function handleLogout() {
     clearToken();
     router.replace("/login");
+  }
+
+  function handleFieldsExtracted(patch: NDAFieldPatch) {
+    setData((prev) => mergeData(prev, patch));
   }
 
   return (
@@ -89,9 +104,32 @@ export default function NDACreator() {
 
       {/* Body */}
       <div className="print-wrapper flex gap-0 h-[calc(100vh-65px)]">
-        {/* Form panel */}
-        <aside className="no-print w-96 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-6">
-          <NDAForm data={data} onChange={setData} />
+        {/* Sidebar */}
+        <aside className="no-print w-96 shrink-0 flex flex-col border-r border-slate-200 bg-white">
+          {/* Tab bar */}
+          <div className="flex border-b border-slate-200 shrink-0">
+            {(["chat", "form"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="flex-1 py-3 text-sm font-medium capitalize transition-colors"
+                style={{
+                  color: activeTab === tab ? "#032147" : "#888888",
+                  borderBottom: activeTab === tab ? "2px solid #209dd7" : "2px solid transparent",
+                }}
+              >
+                {tab === "chat" ? "AI Chat" : "Form"}
+              </button>
+            ))}
+          </div>
+
+          {/* Panels — both always mounted; hidden via CSS to preserve state */}
+          <div className={`flex-1 overflow-y-auto p-6 ${activeTab === "chat" ? "flex flex-col" : "hidden"}`}>
+            <NDAChat onFieldsExtracted={handleFieldsExtracted} />
+          </div>
+          <div className={`flex-1 overflow-y-auto p-6 ${activeTab === "form" ? "block" : "hidden"}`}>
+            <NDAForm data={data} onChange={setData} />
+          </div>
         </aside>
 
         {/* Preview panel */}
