@@ -18,3 +18,8 @@ export interface NDAFormData {
   party1: PartyInfo;
   party2: PartyInfo;
 }
+
+export type NDAFieldPatch = Partial<Omit<NDAFormData, "party1" | "party2">> & {
+  party1?: Partial<PartyInfo>;
+  party2?: Partial<PartyInfo>;
+};
