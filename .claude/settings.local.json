@@ -62,7 +62,25 @@
       "Bash(FRONTEND_BUILD_PATH=../frontend/out timeout 6 uv run uvicorn main:app --host 0.0.0.0 --port 8769)",
       "Bash(curl -s -o /dev/null -w \"/login/ = %{http_code}\\\\n\" http://localhost:8769/login/)",
       "Bash(curl -s -o /dev/null -w \"/signup/ = %{http_code}\\\\n\" http://localhost:8769/signup/)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "mcp__plugin_atlassian_atlassian__getAccessibleAtlassianResources",
+      "mcp__plugin_atlassian_atlassian__getJiraIssue",
+      "Bash(pip install *)",
+      "Bash(curl -LsSf https://astral.sh/uv/install.sh)",
+      "Bash(sh)",
+      "Bash(apt-get install *)",
+      "Bash(curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg)",
+      "Bash(dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg)",
+      "Bash(dpkg --print-architecture)",
+      "Bash(echo \"deb [arch=$\\(dpkg --print-architecture\\) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main\")",
+      "Bash(tee /etc/apt/sources.list.d/github-cli.list)",
+      "Bash(apt update *)",
+      "Bash(apt install *)",
+      "Bash(snap install *)",
+      "Read(//usr/bin/**)",
+      "Bash(find / -name \"gh\" -type f)",
+      "Bash(docker compose *)",
+      "Bash(curl -s http://localhost:8000/)"
     ]
   }
 }
