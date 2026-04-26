@@ -1,0 +1,93 @@
+import { DocTypeConfig } from "./types";
+import { SOFTWARE_LICENSE_TEMPLATE } from "../templates/software-license";
+
+export const softwareLicenseConfig: DocTypeConfig = {
+  docTypeId: "software-license",
+  catalogFilename: "Software-License-Agreement.md",
+  displayName: "Software License Agreement",
+  description: "Common Paper standard agreement for licensing software to customers",
+  isSupplementDoc: false,
+  templateContent: SOFTWARE_LICENSE_TEMPLATE,
+  coverPage: {
+    partyALabel: "Provider",
+    partyBLabel: "Customer",
+    showSignatures: true,
+  },
+  fields: [
+    {
+      key: "effectiveDate",
+      label: "Effective Date",
+      type: "date",
+      templateMarker: "Effective Date",
+      coverPageOrder: 1,
+    },
+    {
+      key: "governingLaw",
+      label: "Governing Law",
+      type: "text",
+      hint: "US state name",
+      placeholder: "Delaware",
+      templateMarker: "Governing Law",
+      coverPageOrder: 2,
+    },
+    {
+      key: "chosenCourts",
+      label: "Chosen Courts",
+      type: "text",
+      hint: "city/county and state",
+      placeholder: "New Castle, Delaware",
+      templateMarker: "Chosen Courts",
+      coverPageOrder: 3,
+    },
+    {
+      key: "generalCapAmount",
+      label: "General Cap Amount",
+      type: "text",
+      placeholder: "Fees paid in the prior 12 months",
+      templateMarker: "General Cap Amount",
+      coverPageOrder: 4,
+    },
+    {
+      key: "increasedCapAmount",
+      label: "Increased Cap Amount",
+      type: "text",
+      placeholder: "2x fees paid in the prior 12 months",
+      templateMarker: "Increased Cap Amount",
+    },
+    {
+      key: "increasedClaims",
+      label: "Increased Claims",
+      type: "textarea",
+      placeholder: "IP infringement, gross negligence, willful misconduct",
+      templateMarker: "Increased Claims",
+    },
+    {
+      key: "unlimitedClaims",
+      label: "Unlimited Claims",
+      type: "textarea",
+      placeholder: "Death or bodily injury, fraud",
+      templateMarker: "Unlimited Claims",
+    },
+    {
+      key: "providerCoveredClaims",
+      label: "Provider Covered Claims",
+      type: "textarea",
+      placeholder: "Third-party IP infringement claims arising from the Software",
+      templateMarker: "Provider Covered Claims",
+    },
+    {
+      key: "customerCoveredClaims",
+      label: "Customer Covered Claims",
+      type: "textarea",
+      placeholder: "Third-party claims arising from Customer's misuse",
+      templateMarker: "Customer Covered Claims",
+    },
+    {
+      key: "additionalWarranties",
+      label: "Additional Warranties",
+      type: "textarea",
+      placeholder: "None",
+      templateMarker: "Additional Warranties",
+    },
+  ],
+};
