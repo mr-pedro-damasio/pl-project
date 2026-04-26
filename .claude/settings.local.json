@@ -61,7 +61,8 @@
       "Bash(curl -s -o /dev/null -w \"/api/auth/signin = %{http_code}\\\\n\" -X POST http://localhost:8768/api/auth/signin -H \"Content-Type: application/json\" -d '{\"username\":\"user\",\"password\":\"password\"}')",
       "Bash(FRONTEND_BUILD_PATH=../frontend/out timeout 6 uv run uvicorn main:app --host 0.0.0.0 --port 8769)",
       "Bash(curl -s -o /dev/null -w \"/login/ = %{http_code}\\\\n\" http://localhost:8769/login/)",
-      "Bash(curl -s -o /dev/null -w \"/signup/ = %{http_code}\\\\n\" http://localhost:8769/signup/)"
+      "Bash(curl -s -o /dev/null -w \"/signup/ = %{http_code}\\\\n\" http://localhost:8769/signup/)",
+      "Skill(update-config)"
     ]
   }
 }
