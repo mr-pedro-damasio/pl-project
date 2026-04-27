@@ -61,12 +61,20 @@ export default function DashboardPage() {
             <p className="text-xs text-slate-400 mt-0.5">AI Legal Document Creator</p>
           </div>
         </div>
-        <button
-          onClick={handleLogout}
-          className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.push("/documents")}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+          >
+            My Documents
+          </button>
+          <button
+            onClick={handleLogout}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+          >
+            Sign out
+          </button>
+        </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-12">

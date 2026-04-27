@@ -83,7 +83,9 @@
       "Bash(curl -s http://localhost:8000/)",
       "mcp__plugin_atlassian_atlassian__getTransitionsForJiraIssue",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")",
-      "mcp__plugin_atlassian_atlassian__transitionJiraIssue"
+      "mcp__plugin_atlassian_atlassian__transitionJiraIssue",
+      "Bash(npx tsc *)",
+      "Bash(env)"
     ]
   }
 }
