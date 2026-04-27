@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routers.auth import router as auth_router
 from routers.chat import router as chat_router
+from routers.documents import router as documents_router
 from database import init_db
 
 FRONTEND_BUILD = os.getenv("FRONTEND_BUILD_PATH", "../frontend/out")
@@ -28,6 +29,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(chat_router)
+app.include_router(documents_router)
 
 if os.path.isdir(FRONTEND_BUILD):
     app.mount("/", StaticFiles(directory=FRONTEND_BUILD, html=True), name="static")
